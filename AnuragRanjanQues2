@@ -1,0 +1,72 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+public class test2 {
+  public static void main(String[] args) {
+    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+  try {
+      int nnumberOfPackets = Integer.parseInt(br.readLine());
+      int[] array = new int[nnumberOfPackets];
+      String[] s = br.readLine().split(" ");
+      for(int i=0;i<s.length;i++){
+        array[i] = Integer.parseInt(s[i]);
+      }
+      int numberOfPeople = Integer.parseInt(br.readLine().split("")[0]);
+      int[] left = new int[numberOfPeople];
+      int[] right = new int[numberOfPeople];
+      for(int i =0 ;i<numberOfPeople;i++){
+         s = br.readLine().split(" ");
+         left[i] =Integer.parseInt(s[0]);
+         right[i] = Integer.parseInt(s[1]);
+      }
+      int queries = Integer.parseInt(br.readLine());
+      int fans =0;
+      StringBuilder fbuilder = new StringBuilder();
+      while (queries-- >0){
+        int n = Integer.parseInt(br.readLine());
+        array[n-1]--;
+        if(array[n-1] < 0 ){
+          fans =-1;
+          break;
+        }
+        if(array[n-1]==0){
+          int i ,j;
+          for( i=n-1,j=n-1;;){
+            boolean flag = false;
+            if(i-1 >= 0 && array[i-1] == 0){
+              i--;
+              flag = true;
+            }
+            if(j+1 < array.length && array[j+1] ==0){
+              j++;
+              flag = true;
+            }
+            if(!flag){
+              break;
+            }
+          }
+          i++;
+          j++;
+          for(int i1=0;i1<numberOfPeople;i1++){
+
+            if(left[i1] >= i && right[i1] <=j && left[i1]!=-1 && right[i1]!= -1){
+              fans++;
+              left[i1] = -1;
+              right[i1] = -1;
+            }
+          }
+
+        }
+        fbuilder.append(fans).append(" ");
+      }
+      if(fans ==-1){
+        System.out.println("lost all items");
+      }else{
+        System.out.println(fbuilder.toString());
+      }
+  }catch (Exception e){
+    e.printStackTrace();
+  }
+
+  }
+}
