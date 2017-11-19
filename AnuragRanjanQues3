@@ -1,0 +1,141 @@
+
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Queues;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.Queue;
+
+public class test {
+  public static void main(String[] args) {
+    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+  try {
+      int testCases = Integer.parseInt(br.readLine());
+      while (testCases-- >0){
+        int junction = Integer.parseInt(br.readLine());
+        Node node = new Node ();
+        node.setVertices(junction);
+        String[] s = br.readLine().split(" ");
+        LinkedList<Integer>police = Lists.newLinkedList();
+        for(int i=0;i<s.length;i++){
+            police.add(Integer.parseInt(s[i]));
+        }
+        node.setPolice(police);
+        String[] sourceDestination = br.readLine().split(" ");
+        int source = Integer.parseInt(sourceDestination[0]);
+        int destination = Integer.parseInt(sourceDestination[1]);
+
+        int roads = Integer.parseInt(br.readLine().split(" ")[0]);
+        Path[][] pathsListArray= new Path[node.getVertices()+1][];
+
+        for(int i=0 ;i < roads ;i++){
+          Path path = new Path();
+          String[] paths = br.readLine().split(" ");
+          path.setStart(Integer.parseInt(paths[0]));
+          path.setEnd(Integer.parseInt(paths[1]));
+          path.setTime(Integer.parseInt(paths[2]));
+          pathsListArray[path.getStart()-1][path.getEnd()-1] = path;
+        }
+        node.setPaths(pathsListArray);
+        int ans = calculateMinimunTime(node,source,destination);
+      }
+  }catch (Exception e){
+    e.printStackTrace();
+  }
+
+  }
+
+  private static int calculateMinimunTime(Node node, int source ,int destination) {
+    Queue<Integer>queue = Queues.newArrayDeque();
+    Path[][] pathList = node.getPaths();
+    queue.add(source);
+    int ans =0;
+    int fans = 100000000;
+    int[] visited = new int[node.getVertices()];
+    for(int i=0;i<visited.length;i++)
+        visited[i]= 0;
+    LinkedList<Integer>police = node.getPolice();
+    visited[source] =1;
+    while (!queue.isEmpty()){
+      int startIndex = queue.peek();
+      visited[startIndex]=1;
+      queue.remove();
+      for(Path path : pathList[startIndex]){
+        if(path.getEnd() == destination && police.get(path.getEnd())!=1){
+          ans +=path.getTime();
+          fans = Math.min(fans , ans);
+        }
+        if(police.get(path.getEnd())!=1 && visited[path.getEnd()]==0)
+        queue.add(path.getEnd());
+      }
+
+    }
+    if (fans == 100000000) {
+      System.out.println(-1);
+    }else {
+      System.out.println(fans);
+    }
+    return 0;
+  }
+}
+
+class Node{
+  private int vertices ;
+  private LinkedList<Integer> police = Lists.newLinkedList();
+  private Path[][] paths = new Path[vertices+1][];
+
+  public int getVertices() {
+    return vertices;
+  }
+
+  public void setVertices(int vertices) {
+    this.vertices = vertices;
+  }
+
+  public LinkedList<Integer> getPolice() {
+    return police;
+  }
+
+  public void setPolice(LinkedList<Integer> police) {
+    this.police = police;
+  }
+
+  public Path[][] getPaths() {
+    return paths;
+  }
+
+  public void setPaths(Path[][] paths) {
+    this.paths = paths;
+  }
+}
+class Path{
+  private int start;
+  private int end;
+  private int time;
+
+  public int getStart() {
+    return start;
+  }
+
+  public void setStart(int start) {
+    this.start = start;
+  }
+
+  public int getEnd() {
+    return end;
+  }
+
+  public void setEnd(int end) {
+    this.end = end;
+  }
+
+  public int getTime() {
+    return time;
+  }
+
+  public void setTime(int time) {
+    this.time = time;
+  }
+}
